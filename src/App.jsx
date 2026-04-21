@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { getImageUrl, getMediaUrl } from './lib/githubMedia.jsx';
+import iconoUrl from '../public{iconoUrl}?url';
 
 const App = () => {
   const [peces, setPeces] = useState([]);
@@ -163,7 +164,7 @@ const App = () => {
       return (
         <div className="h-64 sm:h-96 bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center">
           <div className="text-center">
-            <img src="/icono.png" alt="Ecopia" className="w-16 h-16 mx-auto mb-4" />
+            <img src="{iconoUrl}" alt="Ecopia" className="w-16 h-16 mx-auto mb-4" />
             <p className="text-slate-400">Sin imágenes disponibles</p>
           </div>
         </div>
@@ -249,7 +250,7 @@ const App = () => {
             <img src={thumbnail} alt={pez?.nombre_comun} className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none'; }} />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <img src="/icono.png" alt="Ecopia" className="w-12 h-12 sm:w-14 sm:h-14" />
+              <img src="{iconoUrl}" alt="Ecopia" className="w-12 h-12 sm:w-14 sm:h-14" />
             </div>
           )}
         </div>
@@ -282,7 +283,7 @@ const App = () => {
           {thumbnail && images.length > 0 ? (
             <img src={thumbnail} alt="" className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none'; }} />
           ) : (
-            <img src="/icono.png" alt="Ecopia" className="w-6 h-6" />
+            <img src="{iconoUrl}" alt="Ecopia" className="w-6 h-6" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -356,7 +357,7 @@ const App = () => {
               {cart.map(item => (
                 <div key={item.id} className="flex gap-3 p-3 bg-slate-50 rounded-xl">
                   <div className="w-16 h-16 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <img src="/icono.png" alt="Ecopia" className="w-6 h-6" />
+                    <img src="{iconoUrl}" alt="Ecopia" className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-slate-800 text-sm">{item.nombre_comun}</h4>
@@ -468,7 +469,7 @@ const App = () => {
       <header className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <button className="p-2 rounded-lg bg-emerald-100 text-emerald-600">
-            <img src="/icono.png" alt="Ecopia" className="w-5 h-5" />
+            <img src="{iconoUrl}" alt="Ecopia" className="w-5 h-5" />
           </button>
         </div>
         <h1 className="text-xl font-bold text-emerald-600">Ecopia - Lista de peces</h1>
@@ -523,7 +524,7 @@ const App = () => {
             <div className="text-center py-10 text-slate-400">Cargando...</div>
           ) : filteredPeces.length === 0 ? (
             <div className="text-center py-10 text-slate-400">
-              <img src="/icono.png" alt="Ecopia" className="w-12 h-12 mx-auto mb-2 opacity-30" />
+              <img src="{iconoUrl}" alt="Ecopia" className="w-12 h-12 mx-auto mb-2 opacity-30" />
               <p>No hay peces disponibles</p>
             </div>
           ) : (
@@ -548,7 +549,7 @@ const App = () => {
 
       <nav className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 z-30 flex items-center justify-around">
         <button className="flex flex-col items-center py-2 text-emerald-600">
-          <img src="/icono.png" alt="Catálogo" className="w-6 h-6" />
+          <img src="{iconoUrl}" alt="Catálogo" className="w-6 h-6" />
           <span className="text-[10px] font-bold">Catálogo</span>
         </button>
         <button onClick={() => setShowCart(true)} className={`flex flex-col items-center py-2 ${showCart ? 'text-emerald-600' : 'text-slate-400'}`}>
