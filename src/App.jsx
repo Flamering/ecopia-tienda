@@ -31,6 +31,7 @@ const App = () => {
   const [selectedPez, setSelectedPez] = useState(null);
   const [visibleCount, setVisibleCount] = useState(12);
   const loadMoreRef = useRef(null);
+  const [buttonsDisabled, setButtonsDisabled] = useState(true);
 
   useEffect(() => {
     fetchPeces();
@@ -281,7 +282,8 @@ const App = () => {
             <span className="text-base sm:text-lg font-bold text-emerald-600">${getPrice(pez)}</span>
             <button
               onClick={(e) => { e.stopPropagation(); addToCart(pez); }}
-              className="p-1.5 sm:p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+              disabled={buttonsDisabled}
+              className={`p-1.5 sm:p-2 rounded-lg transition-colors ${buttonsDisabled ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 text-white hover:bg-emerald-600'}`}
             >
               <Plus size={16} />
             </button>
@@ -344,7 +346,8 @@ const App = () => {
               <span className="text-2xl font-bold text-emerald-600">${getPrice(selectedPez)}</span>
               <button
                 onClick={() => addToCart(selectedPez)}
-                className="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-600 transition-colors"
+                disabled={buttonsDisabled}
+                className={`flex items-center gap-2 px-6 py-3 font-bold rounded-xl transition-colors ${buttonsDisabled ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 text-white hover:bg-emerald-600'}`}
               >
                 <ShoppingCart size={20} /> Agregar al Carrito
               </button>
@@ -591,7 +594,7 @@ const App = () => {
           <img src={iconoUrl} alt="Catálogo" className="w-6 h-6" />
           <span className="text-[10px] font-bold">Catálogo</span>
         </button>
-        <button onClick={() => setShowCart(true)} className={`flex flex-col items-center py-2 ${showCart ? 'text-emerald-600' : 'text-slate-400'}`}>
+        <button onClick={() => setShowCart(true)} disabled={buttonsDisabled} className={`flex flex-col items-center py-2 ${buttonsDisabled ? 'text-slate-300 cursor-not-allowed' : showCart ? 'text-emerald-600' : 'text-slate-400'}`}>
           <ShoppingCart size={22} />
           <span className="text-[10px] font-bold">Carrito ({cartCount})</span>
         </button>
