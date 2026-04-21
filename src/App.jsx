@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { getImageUrl, getMediaUrl } from './lib/githubMedia.jsx';
-import iconoUrl from '../public{iconoUrl}?url';
+import iconoUrl from './icono.png?url';
 
 const App = () => {
   const [peces, setPeces] = useState([]);
