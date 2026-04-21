@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Search,
   ShoppingCart,
@@ -29,6 +29,8 @@ const App = () => {
   const [cliente, setCliente] = useState({ nombre: '', email: '', telefono: '', direccion: '' });
   const [viewMode, setViewMode] = useState('grid');
   const [selectedPez, setSelectedPez] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(12);
+  const loadMoreRef = useRef(null);
 
   useEffect(() => {
     fetchPeces();
@@ -42,6 +44,23 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem('ecopia-cart', JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading) {
+          setVisibleCount((prev) => prev + 8);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [loading]);
 
   const fetchPeces = async () => {
     setLoading(true);
@@ -527,20 +546,40 @@ const App = () => {
               <img src={iconoUrl} alt="Ecopia" className="w-12 h-12 mx-auto mb-2 opacity-30" />
               <p>No hay peces disponibles</p>
             </div>
-          ) : (
+          ) : filteredPeces.length > visibleCount ? (
             viewMode === 'grid' ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
-                {filteredPeces.map(pez => (
+              <div id="product-grid" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
+                {filteredPeces.slice(0, visibleCount).map(pez => (
                   <ProductCard key={pez.id} pez={pez} onClick={() => setSelectedPez(pez)} />
                 ))}
               </div>
             ) : (
-              <div className="space-y-3">
-                {filteredPeces.map(pez => (
+              <div id="product-list" className="space-y-3">
+                {filteredPeces.slice(0, visibleCount).map(pez => (
                   <ProductTableRow key={pez.id} pez={pez} onClick={() => setSelectedPez(pez)} />
                 ))}
               </div>
             )
+          ) : (
+            viewMode === 'grid' ? (
+              <div id="product-grid" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
+                {filteredPeces.slice(0, visibleCount).map(pez => (
+                  <ProductCard key={pez.id} pez={pez} onClick={() => setSelectedPez(pez)} />
+                ))}
+              </div>
+            ) : (
+              <div id="product-list" className="space-y-3">
+                {filteredPeces.slice(0, visibleCount).map(pez => (
+                  <ProductTableRow key={pez.id} pez={pez} onClick={() => setSelectedPez(pez)} />
+                ))}
+              </div>
+            )
+          )}
+
+          {filteredPeces.length > visibleCount && (
+            <div ref={loadMoreRef} className="h-10 flex items-center justify-center">
+              <span className="text-slate-400 text-sm">Cargando más...</span>
+            </div>
           )}
           
           <ProductModal />
