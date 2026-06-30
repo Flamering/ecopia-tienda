@@ -17,6 +17,9 @@ import { supabase } from './lib/supabase';
 import { getImageUrl, getMediaUrl } from './lib/githubMedia.jsx';
 import iconoUrl from './icono.png?url';
 
+const HIDE_PRICES = true;
+const HIDE_CART = true;
+
 const App = () => {
   const [peces, setPeces] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -279,14 +282,16 @@ const App = () => {
           <h3 className="font-bold text-slate-800 text-sm sm:text-base mt-0.5 sm:mt-1 line-clamp-1">{pez.nombre_comun}</h3>
           <p className="text-xs sm:text-xs text-slate-400 italic line-clamp-1">{pez.nombre_cientifico}</p>
           <div className="flex items-center justify-between mt-auto pt-2">
-            <span className="text-base sm:text-lg font-bold text-emerald-600">${getPrice(pez)}</span>
-            <button
-              onClick={(e) => { e.stopPropagation(); addToCart(pez); }}
-              disabled={buttonsDisabled}
-              className={`p-1.5 sm:p-2 rounded-lg transition-colors ${buttonsDisabled ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 text-white hover:bg-emerald-600'}`}
-            >
-              <Plus size={16} />
-            </button>
+            {!HIDE_PRICES && <span className="text-base sm:text-lg font-bold text-emerald-600">${getPrice(pez)}</span>}
+            {!HIDE_CART && (
+              <button
+                onClick={(e) => { e.stopPropagation(); addToCart(pez); }}
+                disabled={buttonsDisabled}
+                className={`p-1.5 sm:p-2 rounded-lg transition-colors ${buttonsDisabled ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 text-white hover:bg-emerald-600'}`}
+              >
+                <Plus size={16} />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -312,15 +317,19 @@ const App = () => {
           <p className="text-xs text-slate-400 italic truncate">{pez.nombre_cientifico}</p>
           <span className="text-[10px] font-bold text-emerald-600 uppercase">{pez.clasificacion}</span>
         </div>
-        <div className="text-right">
-          <span className="text-lg font-bold text-emerald-600">${getPrice(pez)}</span>
-        </div>
-        <button
-          onClick={(e) => { e.stopPropagation(); addToCart(pez); }}
-          className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
-        >
-          <Plus size={18} />
-        </button>
+        {!HIDE_PRICES && (
+          <div className="text-right">
+            <span className="text-lg font-bold text-emerald-600">${getPrice(pez)}</span>
+          </div>
+        )}
+        {!HIDE_CART && (
+          <button
+            onClick={(e) => { e.stopPropagation(); addToCart(pez); }}
+            className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+          >
+            <Plus size={18} />
+          </button>
+        )}
       </div>
     );
   };
@@ -343,14 +352,16 @@ const App = () => {
             <p className="mt-4 text-slate-600">{selectedPez.descripcion}</p>
             
             <div className="flex items-center justify-between mt-6">
-              <span className="text-2xl font-bold text-emerald-600">${getPrice(selectedPez)}</span>
-              <button
-                onClick={() => addToCart(selectedPez)}
-                disabled={buttonsDisabled}
-                className={`flex items-center gap-2 px-6 py-3 font-bold rounded-xl transition-colors ${buttonsDisabled ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 text-white hover:bg-emerald-600'}`}
-              >
-                <ShoppingCart size={20} /> Agregar al Carrito
-              </button>
+              {!HIDE_PRICES && <span className="text-2xl font-bold text-emerald-600">${getPrice(selectedPez)}</span>}
+              {!HIDE_CART && (
+                <button
+                  onClick={() => addToCart(selectedPez)}
+                  disabled={buttonsDisabled}
+                  className={`flex items-center gap-2 px-6 py-3 font-bold rounded-xl transition-colors ${buttonsDisabled ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 text-white hover:bg-emerald-600'}`}
+                >
+                  <ShoppingCart size={20} /> Agregar al Carrito
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -483,10 +494,10 @@ const App = () => {
 
   return (
     <div className="flex flex-col h-screen bg-slate-50">
-      {showCart && (
+      {!HIDE_CART && showCart && (
         <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setShowCart(false)} />
       )}
-      <CartDrawer />
+      {!HIDE_CART && <CartDrawer />}
 
       <header className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
@@ -495,14 +506,16 @@ const App = () => {
           </button>
         </div>
         <h1 className="text-xl font-bold text-emerald-600">Ecopia - Lista de peces</h1>
-        <button onClick={() => setShowCart(true)} className="relative p-2 bg-emerald-500 text-white rounded-lg">
-          <ShoppingCart size={20} />
-          {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-              {cartCount}
-            </span>
-          )}
-        </button>
+        {!HIDE_CART && (
+          <button onClick={() => setShowCart(true)} className="relative p-2 bg-emerald-500 text-white rounded-lg">
+            <ShoppingCart size={20} />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </button>
+        )}
       </header>
 
       <main className="flex-1 overflow-y-auto">
@@ -594,10 +607,12 @@ const App = () => {
           <img src={iconoUrl} alt="Catálogo" className="w-6 h-6" />
           <span className="text-[10px] font-bold">Catálogo</span>
         </button>
-        <button onClick={() => setShowCart(true)} disabled={buttonsDisabled} className={`flex flex-col items-center py-2 ${buttonsDisabled ? 'text-slate-300 cursor-not-allowed' : showCart ? 'text-emerald-600' : 'text-slate-400'}`}>
-          <ShoppingCart size={22} />
-          <span className="text-[10px] font-bold">Carrito ({cartCount})</span>
-        </button>
+        {!HIDE_CART && (
+          <button onClick={() => setShowCart(true)} disabled={buttonsDisabled} className={`flex flex-col items-center py-2 ${buttonsDisabled ? 'text-slate-300 cursor-not-allowed' : showCart ? 'text-emerald-600' : 'text-slate-400'}`}>
+            <ShoppingCart size={22} />
+            <span className="text-[10px] font-bold">Carrito ({cartCount})</span>
+          </button>
+        )}
       </nav>
     </div>
   );
