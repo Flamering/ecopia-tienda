@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 const REPO_OWNER = 'Flamering';
 const REPO_NAME = 'fish-media';
 const BRANCH = 'main';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Search,
   ShoppingCart,
@@ -34,7 +34,7 @@ const App = () => {
   const [selectedPez, setSelectedPez] = useState(null);
   const [visibleCount, setVisibleCount] = useState(12);
   const loadMoreRef = useRef(null);
-  const [buttonsDisabled, setButtonsDisabled] = useState(true);
+  const [buttonsDisabled] = useState(true);
 
   useEffect(() => {
     fetchPeces();
@@ -148,7 +148,7 @@ const App = () => {
   const placeOrder = async () => {
     try {
       const numeroPedido = `PED-${Date.now()}`;
-      const { data: pedido, error: pedidoErr } = await supabase
+      const { data: _pedido, error: pedidoErr } = await supabase
         .from('pedidos')
         .insert([{
           numero_pedido: numeroPedido,
