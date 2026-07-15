@@ -176,9 +176,11 @@ const App = () => {
     const videoUrl = (pez && pez.video_url) || '';
     const images = imagenUrl ? imagenUrl.split(',').map(s => s.trim()).filter(Boolean) : [];
     const hasVideo = videoUrl && videoUrl.length > 0;
-    const allMedia = hasVideo 
-      ? [{ type: 'video', url: videoUrl }, ...images.map(url => ({ type: 'image', url }))]
-      : images.map(url => ({ type: 'image', url }));
+    const images2 = images.map(url => ({ type: 'image', url }));
+    const videosList = hasVideo ? videoUrl.split(',').map(s => ({ type: 'video', url: s.trim() })).filter(v => v.url) : [];
+    const allMedia = videosList.length > 0
+      ? [...images2.slice(0, 1), ...videosList, ...images2.slice(1)]
+      : images2;
     
     const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % allMedia.length);
     const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + allMedia.length) % allMedia.length);
