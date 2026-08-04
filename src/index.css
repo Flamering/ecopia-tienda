@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.min-h-app {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.max-h-app-90 {
+  max-height: 90vh;
+  max-height: 90dvh;
+}
