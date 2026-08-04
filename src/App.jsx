@@ -21,6 +21,7 @@ const App = () => {
     selectedCategory,
     setSelectedCategory,
     loadMore,
+    retry,
   } = usePeces();
 
   const [viewMode, setViewMode] = useState('grid');
@@ -50,11 +51,17 @@ const App = () => {
       </div>
 
       <main className="px-4 py-4">
-        {loading ? (
-          <div className="text-center py-10 text-slate-400">Cargando...</div>
-        ) : error ? (
-          <div className="text-center py-10 text-red-400">Error: {error}</div>
-        ) : peces.length === 0 ? (
+        {error ? (
+          <div className="text-center py-10">
+            <p className="text-red-400">Error: {error}</p>
+            <button
+              onClick={retry}
+              className="mt-4 px-5 py-2 rounded-full bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : peces.length === 0 && !loading ? (
           <div className="text-center py-10 text-slate-400">
             <p>No hay peces disponibles</p>
           </div>
@@ -66,6 +73,7 @@ const App = () => {
             sentinelRef={sentinelRef}
             hasMore={hasMore}
             loadingMore={loadingMore}
+            loading={loading}
           />
         )}
       </main>

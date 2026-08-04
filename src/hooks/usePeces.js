@@ -128,5 +128,6 @@ export const usePeces = () => {
     selectedCategory,
     setSelectedCategory,
     loadMore,
+    retry: resetAndFetch,
   };
 };
