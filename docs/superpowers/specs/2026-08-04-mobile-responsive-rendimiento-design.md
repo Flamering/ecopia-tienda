@@ -67,9 +67,10 @@ Hallazgos adicionales del diagnóstico:
 - `src/hooks/useInfiniteScroll.js`: `IntersectionObserver` con `root` = contenedor `main`,
   `rootMargin: '0px 0px -80px 0px'`, `threshold: 0.1`; dispara `onLoadMore` solo si
   `hasMore && !loadingMore`.
-- Precios: consulta separada de `catalogo_productos_proveedor` solo con
-  `select('precio_unitario, pez:peces(nombre_comun)')` filtrado por proveedor 'Ecopia' y
-  `disponibilidad='Disponible'`, un solo fetch al montar. Se aplica como mapa nombre→precio.
+- Precios: NO se consultan ni se muestran. `HIDE_PRICES=true` los mantenía ocultos; se
+  elimina tanto el fetch de `catalogo_productos_proveedor` como la lógica de render para
+  no reintroducir dead code. Re-activarlos requiere una consulta y un span (cambio pequeño,
+  documentado en el plan).
 
 ### 3. Optimización de media
 
@@ -100,10 +101,11 @@ Hallazgos adicionales del diagnóstico:
 ### 5. Remoción de dead code
 
 - Eliminar estado de carrito (`cart`, `showCart`, `checkoutStep`, `orderPlaced`, `cliente`),
-  `CartDrawer`, `ProductTableRow` (se unifica en `ProductCard` con modo list), `addToCart`,
-  `removeFromCart`, `updateQuantity`, `placeOrder`, `cartTotal`, `cartCount`, y el
-  `localStorage 'ecopia-cart'`.
-- Eliminar `HIDE_CART`, `HIDE_PRICES` (no hay precios en el UI), `buttonsDisabled`.
+  `CartDrawer`, `addToCart`, `removeFromCart`, `updateQuantity`, `placeOrder`, `cartTotal`,
+  `cartCount`, y el `localStorage 'ecopia-cart'`.
+- Eliminar `HIDE_CART`, `HIDE_PRICES`, `buttonsDisabled`, y el fetch de precios de
+  `catalogo_productos_proveedor`.
+- Eliminar `ProductTableRow` (se unifica en `ProductCard` con modo list).
 - `githubMedia.jsx` → `media.js` con solo helpers usados.
 - Unificar ramas duplicadas de render (grid/list).
 
