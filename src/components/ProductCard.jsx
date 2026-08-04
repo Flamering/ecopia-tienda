@@ -42,10 +42,10 @@ export const ProductCard = ({ pez, viewMode = 'grid', onClick }) => {
   }
 
   return (
-    <div onClick={onClick} className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg hover:shadow-emerald-500/20 transition-all cursor-pointer flex flex-col">
+    <div onClick={onClick} className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:shadow-emerald-500/20 transition-all cursor-pointer flex flex-col">
       <div className="aspect-[4/3] bg-gradient-to-br from-emerald-50 to-teal-100 overflow-hidden">{renderImage()}</div>
       <div className="p-2 sm:p-3 md:p-4 flex-1 flex flex-col">
-        <span className="text-[8px] sm:text-[10px] font-bold text-emerald-600 uppercase">{pez.clasificacion}</span>
+        <span className="text-[10px] font-bold text-emerald-600 uppercase">{pez.clasificacion}</span>
         <h3 className="font-bold text-slate-800 text-sm sm:text-base mt-0.5 sm:mt-1 line-clamp-1">{pez.nombre_comun}</h3>
         <p className="text-xs text-slate-400 italic line-clamp-1">{pez.nombre_cientifico}</p>
       </div>
