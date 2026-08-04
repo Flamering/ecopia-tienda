@@ -18,7 +18,7 @@ export const useInfiniteScroll = ({ onLoadMore, hasMore, loading, rootRef }) => 
           onLoadMoreRef.current();
         }
       },
-      { root: rootRef.current, rootMargin: '0px 0px -80px 0px', threshold: 0.1 }
+      { root: rootRef?.current, rootMargin: '0px 0px -40px 0px', threshold: 0.1 }
     );
 
     observer.observe(node);
