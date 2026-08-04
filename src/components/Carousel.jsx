@@ -6,10 +6,11 @@ import iconoUrl from '../icono.png?url';
 export const Carousel = ({ pez }) => {
   const [index, setIndex] = useState(0);
   const images = parseImageList(pez?.imagen_url);
-  const hasVideo = Boolean(pez?.video_url);
-  const allMedia = hasVideo
-    ? [{ type: 'video', url: pez.video_url }, ...images.map((url) => ({ type: 'image', url }))]
-    : images.map((url) => ({ type: 'image', url }));
+  const imageMedia = images.map((url) => ({ type: 'image', url }));
+  const videos = parseImageList(pez?.video_url).map((url) => ({ type: 'video', url }));
+  const allMedia = videos.length > 0
+    ? [...imageMedia.slice(0, 1), ...videos, ...imageMedia.slice(1)]
+    : imageMedia;
 
   const goNext = () => setIndex((i) => (i + 1) % allMedia.length);
   const goPrev = () => setIndex((i) => (i - 1 + allMedia.length) % allMedia.length);
