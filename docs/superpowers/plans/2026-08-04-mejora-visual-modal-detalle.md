@@ -290,6 +290,7 @@ git commit -m "feat: add SkeletonGrid, card polish and scrollbar-hide utility"
 - Consumes: `getImageUrl`, `getMediaUrl`, `parseImageList` de `../lib/media`; `iconoUrl` de `../icono.png?url`; `ChevronLeft`, `ChevronRight`, `Play` de `lucide-react`.
 - Produces: `Carousel({ pez, onOpenLightbox })`.
   - `onOpenLightbox(index)` opcional; lo invoca el `<button>` que envuelve cada imagen (las imágenes abren el lightbox; los videos no).
+  - **IMPORTANTE (fix del review final):** `index` debe ser el ordinal IMAGEN-ONLY (posición en `imageIndexes`), NO el índice de `allMedia`. `allMedia` incluye videos (`[img0, video, img1, ...]`), pero `ProductModal` pasa a `Lightbox` una lista solo-imágenes; pasar el índice de `allMedia` abre la imagen equivocada u out-of-bounds. Construir `const imageIndexes = []; allMedia.forEach((m, i) => { if (m.type === 'image') imageIndexes.push(i); });` y llamar `onOpenLightbox?.(imageIndexes.indexOf(idx))`.
   - Estado local `index` derivado de `onScroll` (`Math.round(scrollLeft / clientWidth)`).
   - `goTo(idx)` usa `scrollRef.current.scrollTo({ left: idx * clientWidth, behavior: 'smooth' })`.
   - Dots (mobile) y thumbnails (`hidden sm:flex`) como indicadores; flechas prev/next absolutas.
