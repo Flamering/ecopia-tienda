@@ -4,6 +4,16 @@ import { useDebounce } from './useDebounce';
 
 const PAGE_SIZE = 12;
 
+const partitionByImage = (list) => {
+  const withImage = [];
+  const withoutImage = [];
+  for (const p of list) {
+    if (p.imagen_url) withImage.push(p);
+    else withoutImage.push(p);
+  }
+  return [...withImage, ...withoutImage];
+};
+
 export const usePeces = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -15,7 +25,6 @@ export const usePeces = () => {
   const [error, setError] = useState(null);
   const debouncedSearch = useDebounce(searchTerm, 300);
   const requestIdRef = useRef(0);
-  const useImageOrderRef = useRef(true);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -33,17 +42,14 @@ export const usePeces = () => {
   }, []);
 
   const buildQuery = useCallback(
-    ({ from, to, imageOrder }) => {
+    ({ from, to }) => {
       let query = supabase
         .from('peces')
         .select('id, nombre_comun, nombre_cientifico, clasificacion, descripcion, imagen_url, video_url, estado')
         .eq('eliminado', false)
-        .eq('estado', 'Activo');
-
-      if (imageOrder) {
-        query = query.order('tiene_imagen', { ascending: false });
-      }
-      query = query.order('nombre_comun').range(from, to);
+        .eq('estado', 'Activo')
+        .order('nombre_comun')
+        .range(from, to);
 
       if (selectedCategory !== 'all') {
         query = query.eq('clasificacion', selectedCategory);
@@ -58,25 +64,6 @@ export const usePeces = () => {
     [selectedCategory, debouncedSearch]
   );
 
-  const fetchRange = useCallback(
-    async ({ from, to }) => {
-      try {
-        const res = await buildQuery({ from, to, imageOrder: useImageOrderRef.current });
-        if (res.error) throw res.error;
-        return res;
-      } catch (err) {
-        if (err.code === 'PGRST204' && useImageOrderRef.current) {
-          useImageOrderRef.current = false;
-          const res = await buildQuery({ from, to, imageOrder: false });
-          if (res.error) throw res.error;
-          return res;
-        }
-        throw err;
-      }
-    },
-    [buildQuery]
-  );
-
   const resetAndFetch = useCallback(async () => {
     const requestId = ++requestIdRef.current;
     setLoading(true);
@@ -85,10 +72,10 @@ export const usePeces = () => {
     setHasMore(true);
     setError(null);
     try {
-      const { data, error: err } = await fetchRange({ from: 0, to: PAGE_SIZE - 1 });
+      const { data, error: err } = await buildQuery({ from: 0, to: PAGE_SIZE - 1 });
       if (requestId !== requestIdRef.current) return;
       if (err) throw err;
-      setPeces(data || []);
+      setPeces(partitionByImage(data || []));
       setHasMore((data?.length || 0) === PAGE_SIZE);
     } catch (err) {
       if (requestId !== requestIdRef.current) return;
@@ -98,7 +85,7 @@ export const usePeces = () => {
         setLoading(false);
       }
     }
-  }, [fetchRange]);
+  }, [buildQuery]);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || loading) return;
@@ -106,10 +93,10 @@ export const usePeces = () => {
     setLoadingMore(true);
     try {
       const from = peces.length;
-      const { data, error: err } = await fetchRange({ from, to: from + PAGE_SIZE - 1 });
+      const { data, error: err } = await buildQuery({ from, to: from + PAGE_SIZE - 1 });
       if (requestId !== requestIdRef.current) return;
       if (err) throw err;
-      setPeces((prev) => [...prev, ...(data || [])]);
+      setPeces((prev) => partitionByImage([...prev, ...(data || [])]));
       setHasMore((data?.length || 0) === PAGE_SIZE);
     } catch (err) {
       if (requestId !== requestIdRef.current) return;
@@ -119,7 +106,7 @@ export const usePeces = () => {
         setLoadingMore(false);
       }
     }
-  }, [fetchRange, loadingMore, hasMore, loading, peces.length]);
+  }, [buildQuery, loadingMore, hasMore, loading, peces.length]);
 
   useEffect(() => {
     fetchCategories();
