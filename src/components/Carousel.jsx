@@ -12,6 +12,10 @@ export const Carousel = ({ pez, onOpenLightbox }) => {
   const allMedia = videos.length > 0
     ? [...imageMedia.slice(0, 1), ...videos, ...imageMedia.slice(1)]
     : imageMedia;
+  const imageIndexes = [];
+  allMedia.forEach((m, i) => {
+    if (m.type === 'image') imageIndexes.push(i);
+  });
 
   const handleScroll = () => {
     const el = scrollerRef.current;
@@ -55,7 +59,7 @@ export const Carousel = ({ pez, onOpenLightbox }) => {
               </video>
             ) : (
               <button
-                onClick={() => onOpenLightbox?.(idx)}
+                onClick={() => onOpenLightbox?.(imageIndexes.indexOf(idx))}
                 aria-label={`Ampliar imagen ${idx + 1}`}
                 className="w-full h-full flex items-center justify-center cursor-zoom-in"
               >
