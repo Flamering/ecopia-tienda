@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useDebounce } from './useDebounce';
 
@@ -14,6 +14,7 @@ export const usePeces = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const debouncedSearch = useDebounce(searchTerm, 300);
+  const requestIdRef = useRef(0);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -54,35 +55,46 @@ export const usePeces = () => {
   );
 
   const resetAndFetch = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
     setLoading(true);
+    setLoadingMore(false);
     setPeces([]);
     setHasMore(true);
     setError(null);
     try {
       const { data, error: err } = await buildQuery({ from: 0, to: PAGE_SIZE - 1 });
+      if (requestId !== requestIdRef.current) return;
       if (err) throw err;
       setPeces(data || []);
       setHasMore((data?.length || 0) === PAGE_SIZE);
     } catch (err) {
+      if (requestId !== requestIdRef.current) return;
       setError(err.message || 'Error cargando peces');
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+      }
     }
   }, [buildQuery]);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || loading) return;
+    const requestId = ++requestIdRef.current;
     setLoadingMore(true);
     try {
       const from = peces.length;
       const { data, error: err } = await buildQuery({ from, to: from + PAGE_SIZE - 1 });
+      if (requestId !== requestIdRef.current) return;
       if (err) throw err;
       setPeces((prev) => [...prev, ...(data || [])]);
       setHasMore((data?.length || 0) === PAGE_SIZE);
     } catch (err) {
+      if (requestId !== requestIdRef.current) return;
       setError(err.message || 'Error cargando más peces');
     } finally {
-      setLoadingMore(false);
+      if (requestId === requestIdRef.current) {
+        setLoadingMore(false);
+      }
     }
   }, [buildQuery, loadingMore, hasMore, loading, peces.length]);
 
