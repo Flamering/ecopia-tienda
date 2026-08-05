@@ -14,6 +14,18 @@ const partitionByImage = (list) => {
   return [...withImage, ...withoutImage];
 };
 
+const mergeWithImagePriority = (prev, incoming) => {
+  const { withImage, withoutImage } = { withImage: [], withoutImage: [] };
+  for (const p of incoming) {
+    if (p.imagen_url) withImage.push(p);
+    else withoutImage.push(p);
+  }
+  if (!withImage.length) return [...prev, ...withoutImage];
+  const firstWithoutIdx = prev.findIndex((p) => !p.imagen_url);
+  if (firstWithoutIdx === -1) return [...prev, ...withImage, ...withoutImage];
+  return [...prev.slice(0, firstWithoutIdx), ...withImage, ...prev.slice(firstWithoutIdx), ...withoutImage];
+};
+
 export const usePeces = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -96,7 +108,7 @@ export const usePeces = () => {
       const { data, error: err } = await buildQuery({ from, to: from + PAGE_SIZE - 1 });
       if (requestId !== requestIdRef.current) return;
       if (err) throw err;
-      setPeces((prev) => partitionByImage([...prev, ...(data || [])]));
+      setPeces((prev) => mergeWithImagePriority(prev, data || []));
       setHasMore((data?.length || 0) === PAGE_SIZE);
     } catch (err) {
       if (requestId !== requestIdRef.current) return;
